@@ -85,7 +85,7 @@ services:
     networks:
       - ak-network
     depends_on:
-      - nginx
+      - ak-nginx
     logging: *default-logging
     command: certonly --webroot --webroot-path=/var/www/certbot --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email -d ${CERTBOT_DOMAIN}
 
