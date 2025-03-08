@@ -15,7 +15,7 @@ services:
       dockerfile: plainsite-akaunting.Dockerfile
     restart: unless-stopped
     env_file:
-      - env/.env
+      - .env
     volumes:
       - ak_app_cache:/var/www/html/bootstrap/cache
       - ak_app_public:/var/www/html/public
@@ -38,8 +38,8 @@ services:
       - 443:443
     volumes:
       - ./nginx:/etc/nginx/conf.d:ro
-      - app_public:/var/www/html/public:ro
-      - app_storage:/var/www/html/storage:ro
+      - ak_app_public:/var/www/html/public:ro
+      - ak_app_storage:/var/www/html/storage:ro
       - ./certbot/conf:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot:ro
     networks:
@@ -53,7 +53,7 @@ services:
     image: mariadb
     restart: unless-stopped
     env_file:
-      - env/db.env
+      - .env
     volumes:
       - ak_mysql_data:/var/lib/mysql
     networks:
@@ -77,7 +77,7 @@ services:
   ak-certbot:
     image: certbot/certbot
     env_file:
-      - env/.env
+      - .env
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
