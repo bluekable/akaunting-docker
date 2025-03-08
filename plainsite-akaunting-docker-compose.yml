@@ -56,6 +56,13 @@ services:
       - ak_mysql_data:/var/lib/mysql
     networks:
       - ak-network
+    healthcheck:
+        test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+        start_period: 1m
+        start_interval: 10s
+        interval: 1m
+        timeout: 5s
+        retries: 3
     logging: *default-logging
 
   ak-redis:
