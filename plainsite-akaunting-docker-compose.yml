@@ -14,8 +14,6 @@ services:
     restart: unless-stopped
     env_file:
       - env/run.env
-    build:
-      context: .
     volumes:
       - ak_app_cache:/var/www/html/bootstrap/cache
       - ak_app_public:/var/www/html/public
