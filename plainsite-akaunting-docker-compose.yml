@@ -10,10 +10,12 @@ services:
 
   ak-app:
     container_name: ak-app
-    dockerfile: plainsite-akaunting.Dockerfile
+    build:
+      context: .
+      dockerfile: plainsite-akaunting.Dockerfile
     restart: unless-stopped
     env_file:
-      - env/run.env
+      - env/.env
     volumes:
       - ak_app_cache:/var/www/html/bootstrap/cache
       - ak_app_public:/var/www/html/public
@@ -75,7 +77,7 @@ services:
   ak-certbot:
     image: certbot/certbot
     env_file:
-      - env/run.env
+      - env/.env
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
