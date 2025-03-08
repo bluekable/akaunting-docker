@@ -3,3 +3,6 @@ run.env
 tags
 *.swp
 .DS_Store
+
+
+/certbot

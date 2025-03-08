@@ -11,15 +11,15 @@ services:
   ak-app:
     container_name: ak-app
     dockerfile: plainsite-akaunting.Dockerfile
+    restart: unless-stopped
+    env_file:
+      - env/run.env
     build:
       context: .
     volumes:
       - ak_app_cache:/var/www/html/bootstrap/cache
       - ak_app_public:/var/www/html/public
       - ak_app_storage:/var/www/html/storage
-    restart: unless-stopped
-    env_file:
-      - env/run.env
     environment:
       - AKAUNTING_SETUP
     depends_on:
@@ -30,6 +30,7 @@ services:
     logging: *default-logging
 
   ak-nginx:
+    container_name: ak-nginx
     image: nginx:alpine
     restart: unless-stopped
     ports:
@@ -50,13 +51,13 @@ services:
   ak-mysql:
     container_name: ak-mysql
     image: mariadb
+    restart: unless-stopped
+    env_file:
+      - env/db.env
     volumes:
       - ak_mysql_data:/var/lib/mysql
     networks:
       - ak-network
-    restart: unless-stopped
-    env_file:
-      - env/db.env
     logging: *default-logging
 
   ak-redis:
@@ -76,7 +77,7 @@ services:
   ak-certbot:
     image: certbot/certbot
     env_file:
-      - ./.env
+      - env/run.env
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
