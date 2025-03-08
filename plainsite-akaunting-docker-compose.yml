@@ -1,0 +1,105 @@
+version: '3.7'
+
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "3"
+  driver: json-file
+
+services:
+
+  ak-app:
+    container_name: ak-app
+    dockerfile: plainsite-akaunting.Dockerfile
+    build:
+      context: .
+    volumes:
+      - ak_app_cache:/var/www/html/bootstrap/cache
+      - ak_app_public:/var/www/html/public
+      - ak_app_storage:/var/www/html/storage
+    restart: unless-stopped
+    env_file:
+      - env/run.env
+    environment:
+      - AKAUNTING_SETUP
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging: *default-logging
+
+  ak-nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - app_public:/var/www/html/public:ro
+      - app_storage:/var/www/html/storage:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    networks:
+      - ak-network
+    depends_on:
+      - ak-app
+    logging: *default-logging
+
+  ak-mysql:
+    container_name: ak-mysql
+    image: mariadb
+    volumes:
+      - ak_mysql_data:/var/lib/mysql
+    networks:
+      - ak-network
+    restart: unless-stopped
+    env_file:
+      - env/db.env
+    logging: *default-logging
+
+  ak-redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ak_redis_data:/data
+    networks:
+      - ak-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  ak-certbot:
+    image: certbot/certbot
+    env_file:
+      - ./.env
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/log:/var/log/letsencrypt
+    networks:
+      - ak-network
+    depends_on:
+      - nginx
+    logging: *default-logging
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email -d ${CERTBOT_DOMAIN}
+
+networks:
+  ak-network:
+    driver: bridge
+
+volumes:
+  ak_app_cache:
+    driver: local
+  ak_app_public:
+      driver: local
+  ak_app_storage:
+      driver: local
+  ak_mysql_data:
+      driver: local
+  ak_redis_data:
+      driver: local
