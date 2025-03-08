@@ -21,9 +21,9 @@ services:
     environment:
       - AKAUNTING_SETUP
     depends_on:
-      mysql:
+      ak-mysql:
         condition: service_healthy
-      redis:
+      ak-redis:
         condition: service_healthy
     logging: *default-logging
 
