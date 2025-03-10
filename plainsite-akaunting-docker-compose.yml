@@ -67,6 +67,7 @@ services:
 
   ak-redis:
     image: redis:alpine
+    container_name: ak-redis
     restart: unless-stopped
     volumes:
       - ak_redis_data:/data
@@ -81,6 +82,7 @@ services:
 
   ak-certbot:
     image: certbot/certbot
+    container_name: ak-certbot
     env_file:
       - .env
     volumes:
