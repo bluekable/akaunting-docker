@@ -18,6 +18,8 @@ services:
       - ak_app_cache:/var/www/html/bootstrap/cache
       - ak_app_public:/var/www/html/public
       - ak_app_storage:/var/www/html/storage
+    networks:
+      - ak-network
     environment:
       - AKAUNTING_SETUP
     depends_on:
