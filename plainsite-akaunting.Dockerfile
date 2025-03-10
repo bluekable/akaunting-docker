@@ -55,6 +55,7 @@ RUN npm install
 RUN npm run prod
 
 COPY files/akaunting-php-fpm-nginx-supervisord.sh /usr/local/bin/akaunting-php-fpm-nginx-supervisord.sh
+COPY files/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY files/html /var/www/html
 
 USER root
