@@ -62,12 +62,10 @@ services:
     networks:
       - ak-network
     healthcheck:
-        test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
-        start_period: 1m
-        start_interval: 10s
-        interval: 1m
-        timeout: 5s
-        retries: 3
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     logging: *default-logging
 
   ak-redis:
