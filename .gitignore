@@ -1,5 +1,7 @@
 db.env
 run.env
+.env
+
 tags
 *.swp
 .DS_Store
